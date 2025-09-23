@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build output
+/dist/
+
+# Env files
+.env
+.env.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+# OS / Editor
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Coverage / Tests
+coverage/
+.jest-cache/
+.jest/
+
+# TypeScript
+*.tsbuildinfo
+
+# Misc
+.tmp/
+.cache/

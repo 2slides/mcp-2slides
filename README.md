@@ -1,6 +1,11 @@
 ## 2slides MCP Server
 
-Expose 2slides.com tools for MCP clients (e.g., Claude Desktop).
+![2slides](https://www.2slides.com/images/og_2slides.webp)
+
+Expose [2slides.com](https://www.2slides.com) tools for MCP clients (e.g., Claude Desktop).
+
+### Get Your API Key
+Before using this MCP server, you need to obtain an API key from [2slides.com/api](https://www.2slides.com/api).
 
 ### Configure in Claude Desktop
 Edit `~/Library/Application Support/Claude/claude_desktop_config.json` and add:

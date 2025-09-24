@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import { z } from 'zod';
 import fetch from 'node-fetch';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -6,6 +6,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 
 // Constants
 const API_BASE_URL = 'https://www.2slides.com';
+dotenv.config();
 const API_KEY = process.env.API_KEY ?? '';
 
 if (!API_KEY) {
@@ -23,7 +24,7 @@ const GenerateArgs = {
   responseLanguage: z.string().min(1),
 };
 
-mcp.tool('slides_generate', 'Generate slides with 2slides. Returns job info including jobId and downloadUrl when ready.', GenerateArgs, async (args, _extra) => {
+mcp.tool('slides_generate', 'Generate slides with 2slides. Returns job info including jobId and downloadUrl when ready.', GenerateArgs, async (args: any, _extra: any) => {
     const { themeId, userInput, responseLanguage } = args as z.infer<z.ZodObject<typeof GenerateArgs>>;
     const url = `${API_BASE_URL}/api/v1/slides/generate`;
     const res = await fetch(url, {
@@ -48,7 +49,7 @@ mcp.tool('slides_generate', 'Generate slides with 2slides. Returns job info incl
 // Tool: jobs_get -> GET /api/v1/jobs/{job-id}
 const JobArgs = { jobId: z.string().min(1) };
 
-mcp.tool('jobs_get', 'Get job status/result by jobId from 2slides.', JobArgs, async (args, _extra) => {
+mcp.tool('jobs_get', 'Get job status/result by jobId from 2slides.', JobArgs, async (args: any, _extra: any) => {
     const { jobId } = args as z.infer<z.ZodObject<typeof JobArgs>>;
     const url = `${API_BASE_URL}/api/v1/jobs/${encodeURIComponent(jobId)}`;
     const res = await fetch(url, {
@@ -66,6 +67,34 @@ mcp.tool('jobs_get', 'Get job status/result by jobId from 2slides.', JobArgs, as
       };
     }
     return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
+});
+
+// Tool: themes_search -> GET /api/v1/themes/search
+const ThemesSearchArgs = {
+  query: z.string().min(1),
+  limit: z.number().int().positive().max(100).optional(),
+};
+
+mcp.tool('themes_search', 'Search 2slides themes by query. Optional limit (max 100).', ThemesSearchArgs, async (args: any, _extra: any) => {
+  const { query, limit } = args as z.infer<z.ZodObject<typeof ThemesSearchArgs>>;
+  const search = new URLSearchParams({ query });
+  if (typeof limit === 'number') search.set('limit', String(limit));
+  const url = `${API_BASE_URL}/api/v1/themes/search?${search.toString()}`;
+  const res = await fetch(url, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    return {
+      content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
+      isError: true,
+    };
+  }
+  return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
 });
 
 // Start server over stdio

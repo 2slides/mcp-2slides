@@ -1,23 +1,41 @@
 {
-  "name": "mcp-2slides-server",
-  "version": "0.1.0",
+  "name": "2slides-mcp",
+  "version": "0.1.1",
   "main": "index.js",
+  "type": "module",
+  "description": "MCP server exposing 2slides.com tools (slides generate, jobs get, themes search)",
+  "keywords": ["mcp", "modelcontextprotocol", "2slides", "slides", "claude"],
+  "license": "MIT",
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2slides/2slides-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/2slides/2slides-mcp/issues"
+  },
+  "homepage": "https://github.com/2slides/2slides-mcp#readme",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "tsx src/server.ts"
+    "dev": "tsx src/server.ts",
+    "prepare": "tsc"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "type": "module",
+  "bin": {
+    "2slides-mcp": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.18.1",
+    "@types/dotenv": "^6.1.1",
     "dotenv": "^17.2.2",
     "node-fetch": "^3.3.2",
     "zod": "^3.25.76"

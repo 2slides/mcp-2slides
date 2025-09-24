@@ -50,9 +50,6 @@ Then fully restart Claude Desktop. In a chat, open the tools panel and you shoul
     { "query": "8 stages", "limit": 10 }
     ```
 
-- `templates_browse_url` (No API call)
-  - Returns the templates page URL: `https://www.2slides.com/templates`
-
 All tools return the 2slides API JSON as formatted text. Use `jobs_get` with the `jobId` from `slides_generate` to poll status or get the `downloadUrl` when available.
 
 ### Troubleshooting (Claude Desktop)

@@ -26,15 +26,19 @@ Then fully restart Claude Desktop. In a chat, open the tools panel and you shoul
 
 ### Available Tools
 - `slides_generate` (POST /api/v1/slides/generate)
-  - Args: `themeId` (string), `userInput` (string), `responseLanguage` (string)
+  - Args: `themeId` (string), `userInput` (string), `responseLanguage` (string), `mode` (optional: `sync` | `async`, default `sync`)
   - Example:
     ```json
     {
       "themeId": "st-1756528793701-fcg5fblt2",
       "userInput": "generate sample content",
-      "responseLanguage": "English"
+      "responseLanguage": "English",
+      "mode": "async"
     }
     ```
+  - Notes:
+    - `mode: "sync"` waits for generation to complete and returns the result directly (default).
+    - `mode: "async"` submits the job and returns a `jobId`; poll with `jobs_get`.
 
 - `jobs_get` (GET /api/v1/jobs/{jobId})
   - Args: `jobId` (string)

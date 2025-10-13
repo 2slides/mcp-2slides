@@ -49,7 +49,7 @@ mcp.tool('slides_generate', 'Generate slides with 2slides. Returns job info incl
 // Tool: jobs_get -> GET /api/v1/jobs/{job-id}
 const JobArgs = { jobId: z.string().min(1) };
 
-mcp.tool('jobs_get', 'Get job status/result by jobId from 2slides. Please check every 10 seconds until the status is success.', JobArgs, async (args: any, _extra: any) => {
+mcp.tool('jobs_get', 'Get job status/result by jobId from 2slides. Please check every 20 seconds until the status is success.', JobArgs, async (args: any, _extra: any) => {
     const { jobId } = args as z.infer<z.ZodObject<typeof JobArgs>>;
     const url = `${API_BASE_URL}/api/v1/jobs/${encodeURIComponent(jobId)}`;
     const res = await fetch(url, {

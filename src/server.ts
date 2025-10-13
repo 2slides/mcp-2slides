@@ -22,10 +22,16 @@ const GenerateArgs = {
   themeId: z.string().min(1),
   userInput: z.string().min(1),
   responseLanguage: z.string().min(1),
+  // Optional mode: 'sync' (default) | 'async'
+  mode: z.enum(['sync', 'async']).optional(),
 };
 
-mcp.tool('slides_generate', 'Generate slides with 2slides. Returns job info including jobId and downloadUrl when ready.', GenerateArgs, async (args: any, _extra: any) => {
-    const { themeId, userInput, responseLanguage } = args as z.infer<z.ZodObject<typeof GenerateArgs>>;
+mcp.tool(
+  'slides_generate',
+  "Generate slides with 2slides. Returns job info including jobId and downloadUrl when ready. Optional 'mode' can be 'sync' (default) or 'async'.",
+  GenerateArgs,
+  async (args: any, _extra: any) => {
+    const { themeId, userInput, responseLanguage, mode = 'sync' } = args as z.infer<z.ZodObject<typeof GenerateArgs>>;
     const url = `${API_BASE_URL}/api/v1/slides/generate`;
     const res = await fetch(url, {
       method: 'POST',
@@ -33,7 +39,7 @@ mcp.tool('slides_generate', 'Generate slides with 2slides. Returns job info incl
         Authorization: `Bearer ${API_KEY}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ themeId, userInput, responseLanguage }),
+      body: JSON.stringify({ themeId, userInput, responseLanguage, mode }),
     });
 
     const data = await res.json();
@@ -44,7 +50,8 @@ mcp.tool('slides_generate', 'Generate slides with 2slides. Returns job info incl
       };
     }
     return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
-});
+  }
+);
 
 // Tool: jobs_get -> GET /api/v1/jobs/{job-id}
 const JobArgs = { jobId: z.string().min(1) };

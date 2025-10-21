@@ -5,7 +5,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 
 // Constants
-const API_BASE_URL = 'https://www.2slides.com';
+const API_BASE_URL = 'https://2slides.com';
 dotenv.config();
 const API_KEY = process.env.API_KEY ?? '';
 

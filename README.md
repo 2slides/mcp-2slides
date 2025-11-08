@@ -2,6 +2,10 @@
 
 ![2slides](https://www.2slides.com/images/og_2slides.webp)
 
+<a href="https://glama.ai/mcp/servers/@2slides/mcp-2slides">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@2slides/mcp-2slides/badge" alt="2slides Server MCP server" />
+</a>
+
 Expose [2slides.com](https://www.2slides.com) tools for MCP clients (e.g., Claude Desktop).
 
 ### Get Your API Key
@@ -57,7 +61,7 @@ Then fully restart Claude Desktop. In a chat, open the tools panel and you shoul
 All tools return the 2slides API JSON as formatted text. Use `jobs_get` with the `jobId` from `slides_generate` to poll status or get the `downloadUrl` when available.
 
 ### Troubleshooting (Claude Desktop)
-- If tools don’t appear in Claude, verify the config path is absolute and restart the app.
+- If tools don't appear in Claude, verify the config path is absolute and restart the app.
 - Check Claude MCP logs:
 ```bash
 tail -n 50 -f ~/Library/Logs/Claude/mcp*.log
@@ -68,4 +72,3 @@ tail -n 50 -f ~/Library/Logs/Claude/mcp*.log
 - Build an MCP server (official docs): https://modelcontextprotocol.io/docs/develop/build-server
 - 2slides: https://www.2slides.com
 - 2slides Templates: https://www.2slides.com/templates
-

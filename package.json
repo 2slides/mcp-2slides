@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/2slides/2slides-mcp#readme",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"No tests specified\"",
     "build": "tsc",
     "start": "node dist/server.js",
     "dev": "tsx src/server.ts",

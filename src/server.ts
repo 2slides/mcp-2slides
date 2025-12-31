@@ -15,7 +15,7 @@ if (!API_KEY) {
 }
 
 // Initialize MCP server
-const mcp = new McpServer({ name: '2slides-mcp', version: '0.1.0' });
+const mcp = new McpServer({ name: '2slides-mcp', version: '0.2.2' });
 
 // Tool: slides_generate -> POST /api/v1/slides/generate
 const GenerateArgs = {
@@ -103,6 +103,58 @@ mcp.tool('themes_search', 'Search 2slides themes by query. Optional limit (max 1
   }
   return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
 });
+
+// Tool: slides_create_like_this -> POST /api/v1/slides/create-like-this
+const CreateLikeThisArgs = {
+  userInput: z.string().min(1),
+  referenceImageUrl: z.string().min(1),
+  responseLanguage: z.string().optional(),
+  aspectRatio: z.string().optional(),
+  resolution: z.string().optional(),
+  page: z.number().int().min(0).max(100).optional(),
+  contentDetail: z.enum(['concise', 'standard']).optional(),
+};
+
+mcp.tool(
+  'slides_create_like_this',
+  'Generate slides (Nano Banana Pro) from a reference image (synchronous mode, generates PDF automatically).',
+  CreateLikeThisArgs,
+  async (args: any, _extra: any) => {
+    const {
+      userInput,
+      referenceImageUrl,
+      responseLanguage,
+      aspectRatio,
+      resolution,
+      page,
+      contentDetail,
+    } = args as z.infer<z.ZodObject<typeof CreateLikeThisArgs>>;
+    const url = `${API_BASE_URL}/api/v1/slides/create-like-this`;
+    const body: Record<string, any> = { userInput, referenceImageUrl };
+    if (responseLanguage) body.responseLanguage = responseLanguage;
+    if (aspectRatio) body.aspectRatio = aspectRatio;
+    if (resolution) body.resolution = resolution;
+    if (typeof page === 'number') body.page = page;
+    if (contentDetail) body.contentDetail = contentDetail;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      return {
+        content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
+        isError: true,
+      };
+    }
+    return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
+  }
+);
 
 // Start server over stdio
 const transport = new StdioServerTransport();

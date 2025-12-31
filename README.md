@@ -54,6 +54,25 @@ Then fully restart Claude Desktop. In a chat, open the tools panel and you shoul
     { "query": "8 stages", "limit": 10 }
     ```
 
+- `slides_create_like_this` (POST /api/v1/slides/create-like-this)
+  - Args: `userInput` (string, required), `referenceImageUrl` (string, required), `responseLanguage` (string, optional, default: Auto), `aspectRatio` (string, optional, default: 16:9), `resolution` (string, optional, default: 2K), `page` (number, optional, default: 1, 0 for auto-detect, >=1 for specified count, max: 100), `contentDetail` (string, optional, default: concise, options: concise/standard)
+  - Example:
+    ```json
+    {
+      "userInput": "Create a presentation about AI",
+      "referenceImageUrl": "https://example.com/image.jpg",
+      "responseLanguage": "English",
+      "aspectRatio": "16:9",
+      "resolution": "2K",
+      "page": 4,
+      "contentDetail": "concise"
+    }
+    ```
+  - Notes:
+    - Generates slides (Nano Banana Pro) from a reference image in synchronous mode.
+    - Automatically generates PDF.
+    - Returns: `jobId`, `status`, `downloadUrl` (PDF), `jobUrl` (workspace link), `slidePageCount`.
+
 All tools return the 2slides API JSON as formatted text. Use `jobs_get` with the `jobId` from `slides_generate` to poll status or get the `downloadUrl` when available.
 
 ### Troubleshooting (Claude Desktop)

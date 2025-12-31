@@ -1,11 +1,11 @@
 ## 2slides MCP Server
 
-![2slides](https://www.2slides.com/images/og_2slides.webp)
+![2slides](https://2slides.com/images/og_2slides.webp)
 
-Expose [2slides.com](https://www.2slides.com) tools for MCP clients (e.g., Claude Desktop).
+Expose [2slides.com](https://2slides.com) tools for MCP clients (e.g., Claude Desktop).
 
 ### Get Your API Key
-Before using this MCP server, you need to obtain an API key from [2slides.com/api](https://www.2slides.com/api).
+Before using this MCP server, you need to obtain an API key from [2slides.com/api](https://2slides.com/api).
 
 ### Configure in Claude Desktop
 Edit `~/Library/Application Support/Claude/claude_desktop_config.json` and add:
@@ -66,6 +66,6 @@ tail -n 50 -f ~/Library/Logs/Claude/mcp*.log
 
 ### References
 - Build an MCP server (official docs): https://modelcontextprotocol.io/docs/develop/build-server
-- 2slides: https://www.2slides.com
-- 2slides Templates: https://www.2slides.com/templates
+- 2slides: https://2slides.com
+- 2slides Templates: https://2slides.com/templates
 

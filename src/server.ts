@@ -15,7 +15,7 @@ if (!API_KEY) {
 }
 
 // Initialize MCP server
-const mcp = new McpServer({ name: '2slides-mcp', version: '0.2.2' });
+const mcp = new McpServer({ name: '2slides-mcp', version: '0.2.4' });
 
 // Tool: slides_generate -> POST /api/v1/slides/generate
 const GenerateArgs = {
@@ -145,6 +145,155 @@ mcp.tool(
       body: JSON.stringify(body),
     });
 
+    const data = await res.json();
+    if (!res.ok) {
+      return {
+        content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
+        isError: true,
+      };
+    }
+    return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
+  }
+);
+
+// Tool: slides_create_pdf_slides -> POST /api/v1/slides/create-pdf-slides
+const CreatePdfSlidesArgs = {
+  userInput: z.string().min(1),
+  designStyle: z.string().optional(),
+  responseLanguage: z.string().optional(),
+  aspectRatio: z.string().optional(),
+  resolution: z.enum(['1K', '2K', '4K']).optional(),
+  page: z.number().int().min(0).max(100).optional(),
+  contentDetail: z.enum(['concise', 'standard']).optional(),
+};
+
+mcp.tool(
+  'slides_create_pdf_slides',
+  'Generate custom-designed slides (Nano Banana) from text content without a reference image. Async only — returns jobId; poll status with jobs_get. Optional designStyle lets you describe the visual style. Credits: 100 per page (1K/2K) or 200 per page (4K).',
+  CreatePdfSlidesArgs,
+  async (args: any, _extra: any) => {
+    const {
+      userInput,
+      designStyle,
+      responseLanguage,
+      aspectRatio,
+      resolution,
+      page,
+      contentDetail,
+    } = args as z.infer<z.ZodObject<typeof CreatePdfSlidesArgs>>;
+    const url = `${API_BASE_URL}/api/v1/slides/create-pdf-slides`;
+    const body: Record<string, any> = { userInput, mode: 'async' };
+    if (designStyle) body.designStyle = designStyle;
+    if (responseLanguage) body.responseLanguage = responseLanguage;
+    if (aspectRatio) body.aspectRatio = aspectRatio;
+    if (resolution) body.resolution = resolution;
+    if (typeof page === 'number') body.page = page;
+    if (contentDetail) body.contentDetail = contentDetail;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      return {
+        content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
+        isError: true,
+      };
+    }
+    return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
+  }
+);
+
+// Tool: slides_generate_narration -> POST /api/v1/slides/generate-narration
+const GenerateNarrationArgs = {
+  jobId: z.string().min(1),
+  mode: z.enum(['single', 'multi']).optional(),
+  // Single-speaker fields
+  speakerName: z.string().optional(),
+  voice: z.string().optional(),
+  contentMode: z.string().optional(),
+  includeIntro: z.boolean().optional(),
+  // Multi-speaker fields
+  speaker1Name: z.string().optional(),
+  speaker2Name: z.string().optional(),
+  speaker1Voice: z.string().optional(),
+  speaker2Voice: z.string().optional(),
+};
+
+mcp.tool(
+  'slides_generate_narration',
+  "Add AI voice narration to a completed Nano Banana job (from slides_create_like_this or slides_create_pdf_slides). Async only — returns jobId; poll with jobs_get. Use mode='single' (default) for one speaker or mode='multi' for two speakers. Supported voices: Puck, Aoede, Charon, Kore, Fenrir, Zephyr, Leda, Orus, and more. Credits: 210 per page.",
+  GenerateNarrationArgs,
+  async (args: any, _extra: any) => {
+    const {
+      jobId,
+      mode = 'single',
+      speakerName,
+      voice,
+      contentMode,
+      includeIntro,
+      speaker1Name,
+      speaker2Name,
+      speaker1Voice,
+      speaker2Voice,
+    } = args as z.infer<z.ZodObject<typeof GenerateNarrationArgs>>;
+    const url = `${API_BASE_URL}/api/v1/slides/generate-narration`;
+    const body: Record<string, any> = { jobId, mode };
+    if (mode === 'multi') {
+      if (speaker1Name) body.speaker1Name = speaker1Name;
+      if (speaker2Name) body.speaker2Name = speaker2Name;
+      if (speaker1Voice) body.speaker1Voice = speaker1Voice;
+      if (speaker2Voice) body.speaker2Voice = speaker2Voice;
+      if (contentMode) body.contentMode = contentMode;
+    } else {
+      if (speakerName) body.speakerName = speakerName;
+      if (voice) body.voice = voice;
+      if (contentMode) body.contentMode = contentMode;
+      if (typeof includeIntro === 'boolean') body.includeIntro = includeIntro;
+    }
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      return {
+        content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
+        isError: true,
+      };
+    }
+    return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
+  }
+);
+
+// Tool: slides_download_pages_voices -> POST /api/v1/slides/download-slides-pages-voices
+const DownloadPagesVoicesArgs = {
+  jobId: z.string().min(1),
+};
+
+mcp.tool(
+  'slides_download_pages_voices',
+  'Export slide pages and audio narration as a ZIP file from a completed job that has narration. Returns a temporary downloadUrl (expires in 1 hour). The ZIP contains pages/ (slide images), voices/ (audio files), and transcript.txt. Free — no credits charged.',
+  DownloadPagesVoicesArgs,
+  async (args: any, _extra: any) => {
+    const { jobId } = args as z.infer<z.ZodObject<typeof DownloadPagesVoicesArgs>>;
+    const url = `${API_BASE_URL}/api/v1/slides/download-slides-pages-voices`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ jobId }),
+    });
     const data = await res.json();
     if (!res.ok) {
       return {

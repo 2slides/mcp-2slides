@@ -1,6 +1,6 @@
 {
   "name": "2slides-mcp",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "main": "index.js",
   "type": "module",
   "description": "MCP server exposing 2slides.com tools (slides generate, jobs get, themes search)",
@@ -12,7 +12,7 @@
     "claude"
   ],
   "license": "MIT",
-  "author": "",
+  "author": "2slides <2slideai@gmail.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/2slides/2slides-mcp.git"

@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/2slides-mcp-2slides-badge.png)](https://mseep.ai/app/2slides-mcp-2slides)
+
 ## 2slides MCP Server
 
 ![2slides](https://2slides.com/images/og_2slides.webp)

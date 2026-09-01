@@ -6,7 +6,10 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 
 // Constants
 const API_BASE_URL = 'https://2slides.com';
-dotenv.config();
+// quiet: true is required, not cosmetic. On a stdio MCP server stdout carries the
+// JSON-RPC stream, and dotenv >=17 prints a banner there on every start, which
+// corrupts the first message a client reads.
+dotenv.config({ quiet: true });
 const API_KEY = process.env.API_KEY ?? '';
 
 if (!API_KEY) {
@@ -15,7 +18,7 @@ if (!API_KEY) {
 }
 
 // Initialize MCP server
-const mcp = new McpServer({ name: '2slides-mcp', version: '0.2.4' });
+const mcp = new McpServer({ name: '2slides-mcp', version: '0.2.5' });
 
 // Shared valid values
 const ASPECT_RATIOS = ['1:1', '2:3', '3:2', '3:4', '4:3', '4:5', '5:4', '9:16', '16:9', '21:9'] as const;
@@ -313,13 +316,13 @@ mcp.tool(
   }
 );
 
-// Tool: slides_download_pages_voices -> POST /api/v1/slides/download-slides-pages-voices
+// Tool: slides_download_slides_pages_voices -> POST /api/v1/slides/download-slides-pages-voices
 const DownloadPagesVoicesArgs = {
   jobId: z.string().min(1),
 };
 
 mcp.tool(
-  'slides_download_pages_voices',
+  'slides_download_slides_pages_voices',
   "Export slide pages and audio narration as a ZIP file. The job must be completed and have narration generated (slides_generate_narration). ZIP contains: pages/ (page_01.png, page_02.png, …), voices/ (page_01.wav, page_02.wav, …), transcript.txt. Returns downloadUrl (expires in 1 hour), fileName, and expiresIn (3600 seconds). Free — no credits charged.",
   DownloadPagesVoicesArgs,
   async (args: any, _extra: any) => {

@@ -2,19 +2,75 @@
 
 ![2slides](https://2slides.com/images/og_2slides.webp)
 
-Expose [2slides.com](https://2slides.com) tools for MCP clients (e.g., Claude Desktop).
+Expose [2slides.com](https://2slides.com) tools to MCP clients: generate PowerPoint decks
+and custom-designed slides, add AI voice narration, and get the finished files back as
+download links.
 
 ### Get Your API Key
-Before using this MCP server, you need to obtain an API key from [2slides.com/api](https://2slides.com/api).
+Before connecting, get an API key from [2slides.com/api](https://2slides.com/api).
 
-### Configure in Claude Desktop
-Edit `~/Library/Application Support/Claude/claude_desktop_config.json` and add:
+### Connect
+
+2slides runs a hosted **Streamable HTTP** MCP endpoint, and also ships this **stdio**
+package. Both expose the same 7 tools against the same account and the same credits.
+
+|                | Streamable HTTP                     | stdio (this package)                  |
+| -------------- | ----------------------------------- | ------------------------------------- |
+| Setup          | one command, nothing to install     | needs Node.js 18+, npx fetches the package |
+| Updates        | server-side, always current         | re-downloaded on your machine         |
+| Runs in        | any remote-capable MCP client       | any client that can spawn a local process |
+
+#### Option 1 — Streamable HTTP (recommended)
+
+Anthropic's MCP docs call HTTP "the recommended option for connecting to remote MCP
+servers", and 2slides is a hosted service with no local files or processes to reach, so
+start here.
+
+**Claude Code**
+
+```bash
+claude mcp add --transport http 2slides "https://2slides.com/api/mcp?apikey=YOUR_2SLIDES_API_KEY"
+```
+
+Verify with `claude mcp list` — the server should report `✔ Connected`.
+
+**Project config** (`.mcp.json`, shared with your team)
+
+```json
+{
+  "mcpServers": {
+    "2slides": {
+      "type": "http",
+      "url": "https://2slides.com/api/mcp?apikey=YOUR_2SLIDES_API_KEY"
+    }
+  }
+}
+```
+
+**Claude Desktop / claude.ai**: add it as a custom connector at
+[claude.ai/customize/connectors](https://claude.ai/customize/connectors) with the same
+URL.
+
+#### Option 2 — stdio (local process)
+
+Use this when the client can only spawn local processes, when the machine has no direct
+route to 2slides.com, or when you want to pin and patch the server yourself.
+
+**Claude Code**
+
+```bash
+claude mcp add 2slides -e API_KEY=YOUR_2SLIDES_API_KEY -- npx -y 2slides-mcp@latest
+```
+
+**Claude Desktop** — edit `~/Library/Application Support/Claude/claude_desktop_config.json`
+(`%APPDATA%\Claude\claude_desktop_config.json` on Windows):
+
 ```json
 {
   "mcpServers": {
     "2slides": {
       "command": "npx",
-      "args": ["2slides-mcp"],
+      "args": ["-y", "2slides-mcp@latest"],
       "env": {
         "API_KEY": "YOUR_2SLIDES_API_KEY"
       }
@@ -22,7 +78,9 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json` and add:
   }
 }
 ```
-Then fully restart Claude Desktop. In a chat, open the tools panel and you should see the tools below.
+
+The `-y` flag lets npx install the package without prompting. Fully restart Claude Desktop
+afterwards; in a chat, open the tools panel and you should see the tools below.
 
 ### Available Tools
 
@@ -171,7 +229,7 @@ Add AI voice narration to a completed Nano Banana job (`slides_create_like_this`
 
 ---
 
-#### `slides_download_pages_voices` (POST /api/v1/slides/download-slides-pages-voices)
+#### `slides_download_slides_pages_voices` (POST /api/v1/slides/download-slides-pages-voices)
 Export slide pages and audio narration as a ZIP file. The job must be completed and have narration generated.
 
 - **Args:**
@@ -208,7 +266,7 @@ Export slide pages and audio narration as a ZIP file. The job must be completed 
 2. `jobs_get` → wait for slides to complete
 3. `slides_generate_narration` → get narration `jobId`
 4. `jobs_get` → wait for narration to complete
-5. `slides_download_pages_voices` → get ZIP download link
+5. `slides_download_slides_pages_voices` → get ZIP download link
 
 ---
 

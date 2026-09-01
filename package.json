@@ -1,6 +1,6 @@
 {
   "name": "2slides-mcp",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "main": "index.js",
   "type": "module",
   "description": "MCP server exposing 2slides.com tools (slides generate, jobs get, themes search)",
@@ -15,12 +15,12 @@
   "author": "2slides <2slideai@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/2slides/2slides-mcp.git"
+    "url": "git+https://github.com/2slides/mcp-2slides.git"
   },
   "bugs": {
-    "url": "https://github.com/2slides/2slides-mcp/issues"
+    "url": "https://github.com/2slides/mcp-2slides/issues"
   },
-  "homepage": "https://github.com/2slides/2slides-mcp#readme",
+  "homepage": "https://github.com/2slides/mcp-2slides#readme",
   "scripts": {
     "test": "echo \"No tests specified\"",
     "build": "tsc",
